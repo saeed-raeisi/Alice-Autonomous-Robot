@@ -1,60 +1,87 @@
-#include "Motor.h"
-#include "eye.h"
-#include "Motion.h"
-Motor myMotor;
+//#include <AliceBody.h>
+//#include <AliceHead.h>
+#include "AliceBody.h"
+#include "AliceHead.h"
+// lcd
+#define lcd_pin1 1
+#define lcd_pin2 1
+#define lcd_pin3 1
+#define lcd_pin4 1
+#define lcd_pin5 1
+#define lcd_pin6 1
+#define lcd_pin7 1
+// red 
+#define motion_pin 9
+// L298
+#define Motor1_Enb 3
+#define Motor1_R 2
+#define Motor1_B 4
+
+#define Motor2_R 5
+#define Motor2_B 7
+#define Motor2_Enb 6
+// Ultera Sonic srf04
+#define trigger_pin 1
+#define echo_pin 2
+// hand 
+#define left_arm_pin 1
+#define right_arm_pin 1
+#define left_wrist_pin 1
+#define right_wrist_pin 1
+
 int dis_state=0;
 int motion_state=0;
+void Controller(int motion);
+
+Eye eye(trigger_pin,echo_pin);
+Mouth mouth(lcd_pin1,lcd_pin2,lcd_pin3,lcd_pin4,lcd_pin5,lcd_pin6,lcd_pin7);
+Wheels wheel(Motor1_Enb,Motor1_R,Motor1_B,Motor2_Enb,Motor2_R,Motor2_B);
+Hands hand(left_arm_pin,right_arm_pin,left_wrist_pin,right_wrist_pin);
+
 void setup() {
-  /* header set all library and class name and define 
-   *  .c file all function stracture
-   *  
-   *  mega 
-   * body and head 
-   * body -> class wheels and hands 
-   * 
-     * wheels -> motor and some change
-     * hands -> just servo and degree
-   * 
-   * head -> eye and abro and dahan 
-   * 
-   *  eye -> eye.h
-   *  abro -> just servo 
-   *  dahan -> just lcd
-   * 
-   * uno -> get signal and paly music 
-   * 
-   * 
-   * robot after turn on    -> look right and left and strait go to less distance or go to moving object      or random move
-   * robot after see -> smile and state 1 abro
-   * robot after get wall -> sad an state 2 abro
-   * robot after not found any thing get absolate and state 3 abro
-   * 
-   * robot have random choise 
-   * 
-   * 
-  */
   Serial.begin(9600);
-  setup_eye();
-  setup_motion();
-  myMotor.setup_motor();
+  setup_motion(motion_pin);
 }
 
 void loop() 
 {
-  // i -> state 1-> right 2-> front 3->left
-  for(int i=1;i<4;i++)
+  // check motion 1 or 0 
+  Controller(check_motion());
+
+}
+
+void Controller(int motion)
+{
+  if (motion == 1)
   {
-  Serial.print("state");
-  Serial.print("\t");
-  Serial.print(i);
-  dis_state=0;
-  motion_state=0;
-  //dis <10 -> 1   >10-> 2  else 0
-  dis_state = eye_move(i);
-  // motion 1 find else 0
-  motion_state = check_motion();
-  // 
-  myMotor.start(dis_state,i,motion_state);
+    if (eye.distance() ==1){
+      wheel.move('b',1000);
+    }
+    wheel.move('f',1000);
+  }
+  else
+  {
+    int rand = random(1,10);
+    switch (rand) 
+      {
+        case 1:
+          wheel.rotate('r',2000);
+          break;
+        case 2:
+        wheel.rotate('l',2000);
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        case 5:
+          break;
+        case 6:
+          break;                
+        default:
+          break;
+      }
+
   }
 }
   
