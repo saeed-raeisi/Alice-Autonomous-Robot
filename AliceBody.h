@@ -44,11 +44,11 @@ class Hands
         void wrist_move(char hand, int state); // state 1->open & state 0-> close
 
     private:
-    Servo Left_arm;
-    Servo Right_arm;
 
-    Servo Left_wrist;
-    Servo Right_wrist;
+    uint8_t Left_arm_pin;
+    uint8_t Right_arm_pin;
+    uint8_t Left_wrist_pin;
+    uint8_t Right_wrist_pin;
 };
 
 
@@ -62,6 +62,13 @@ Wheels::Wheels(uint8_t Motor1_Enb,uint8_t Motor1_R,uint8_t Motor1_B,uint8_t Moto
     pinMode(Motor2_Enb, OUTPUT);
     pinMode(Motor2_R, OUTPUT);
     pinMode(Motor2_B, OUTPUT);
+    this->Motor1_Enb = Motor1_Enb;
+    this->Motor1_R = Motor1_R;
+    this->Motor1_B = Motor1_B;
+
+    this->Motor2_Enb = Motor2_Enb;
+    this->Motor2_R = Motor2_R;
+    this->Motor2_B = Motor2_B;
 }
 
 void Wheels::rotate(char direction, long int time)
@@ -71,7 +78,8 @@ void Wheels::rotate(char direction, long int time)
     {
         digitalWrite(Motor1_R, HIGH);
         digitalWrite(Motor1_B, LOW);
-        analogWrite(Motor1_Enb, 120);
+//        analogWrite(Motor1_Enb, 120);
+        digitalWrite(Motor1_Enb, HIGH);
         delay(time);
         digitalWrite(Motor1_Enb, LOW);
         digitalWrite(Motor2_Enb, LOW);
@@ -80,7 +88,8 @@ void Wheels::rotate(char direction, long int time)
     {   
         digitalWrite(Motor2_R, HIGH);
         digitalWrite(Motor2_B, LOW);
-        analogWrite(Motor2_Enb, 120);
+//        analogWrite(Motor2_Enb, 120);
+        digitalWrite(Motor2_Enb, HIGH);
         delay(time);
         digitalWrite(Motor1_Enb, LOW);
         digitalWrite(Motor2_Enb, LOW);
@@ -131,36 +140,38 @@ void Wheels::move(char direction,long int time)
 
 Hands::Hands(uint8_t left_arm_pin, uint8_t right_arm_pin, uint8_t left_wrist_pin, uint8_t right_wrist_pin)
 {
-    pinMode(left_arm_pin,OUTPUT);
-    pinMode(right_arm_pin,OUTPUT);
-
-    pinMode(left_wrist_pin,OUTPUT);
-    pinMode(right_wrist_pin,OUTPUT);
-
-    Left_arm.attach(left_arm_pin);
-    Right_arm.attach(right_arm_pin);
-
-    Left_wrist.attach(left_wrist_pin);
-    Right_wrist.attach(right_wrist_pin);
+  // arm pin
+    this->Left_arm_pin = left_arm_pin;
+    this->Right_arm_pin = right_arm_pin;    
+ // wrist pin
+    this->Left_wrist_pin = left_wrist_pin;
+    this->Right_wrist_pin = right_wrist_pin;
 }
 
 void Hands::hand_move(char hand, int direction)
 {
-    if (hand == 'r'){
+  Servo thisServo;
 
+    if (hand == 'r'){
+      thisServo.attach(Right_arm_pin);
+      thisServo.write(direction);
     }
     else{
-
+      thisServo.attach(Left_arm_pin);
+       thisServo.write(direction);
     }
 }
 
 void Hands::wrist_move(char hand, int state)
 {
+    Servo thisServo;
     if (hand == 'r'){
-
+      thisServo.attach(Right_wrist_pin);
+        thisServo.write(state);
     }
     else{
-        
+      thisServo.attach(Left_wrist_pin);
+        thisServo.write(state);
     }
 
 }
@@ -170,23 +181,23 @@ void Hands::wrist_move(char hand, int state)
 void setup_motion(uint8_t motion_pin) 
 { 
   pinMode(motion_pin, INPUT); 
-  motion = motion_pin;
+//  motion = motion_pin;
 }
  
-int check_motion()
+int check_motion(uint8_t motion_pin)
 {
   
-  int x= digitalRead(motion);
+  int x= digitalRead(motion_pin);
  
-  if(digitalRead(motion)==HIGH)
+  if(digitalRead(motion_pin)==HIGH)
   {
-    Serial.println("motion return  1 ");
-    Serial.println(x);
+//    Serial.println("motion return  1 ");
+//    Serial.println(x);
     return 1;
   }
   else
   {
-    Serial.println("motion  return 0 ");
+//    Serial.println("motion  return 0 ");
     return 0;
   }
 } 

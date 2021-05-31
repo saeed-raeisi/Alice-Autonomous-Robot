@@ -1,7 +1,7 @@
 #include <Servo.h>
 #include <LiquidCrystal.h>
 
-LiquidCrystal Mouth_lcd(11,10,9,5,4,3,2);
+LiquidCrystal Mouth_lcd(8,7,6,5,4,3,2);
 byte Smile1[8]={ 
   B00000,
   B00000,
@@ -106,10 +106,11 @@ class Mouth
 
 Eye::Eye(uint8_t trigger_pin, uint8_t echo_pin)
 {
-    Trig = trigger_pin;
-    Echo = echo_pin;
-    pinMode(Trig, OUTPUT);
+      pinMode(Trig, OUTPUT);
     pinMode(Echo, INPUT);
+    this->Trig = trigger_pin;
+    this->Echo = echo_pin;
+
 }
 
 int Eye::distance(unsigned int cm_distance)
@@ -125,13 +126,13 @@ int Eye::distance(unsigned int cm_distance)
   if (Time < 30000) {
     if (distance > cm_distance)
     {
-       Serial.println("eye distance >10 return 2");
-       Serial.println(distance);
+//       Serial.println("eye distance >10 return 2");
+//       Serial.println(distance);
        return 2; 
     }
     else{
-      Serial.println("eye distance <10  return 1");
-      Serial.println(distance); 
+////      Serial.println("eye distance <10  return 1");
+//      Serial.println(distance); 
         return 1;
     }
   }
@@ -157,7 +158,7 @@ Mouth::Mouth(uint8_t lcd_pin1,uint8_t lcd_pin2,uint8_t lcd_pin3,uint8_t lcd_pin4
     LiquidCrystal lcd(lcd_pin1,lcd_pin2,lcd_pin3,lcd_pin4,lcd_pin5,lcd_pin6,lcd_pin7);
     lcd.begin(16, 2);
     lcd.clear();
-    Mouth_lcd = lcd;
+//    Mouth_lcd = lcd;
 }
 
 void Mouth::smiley_face()
@@ -174,8 +175,8 @@ void Mouth::smiley_face()
 
     
 
-  for(index=4;index<12;index++){     //For loop will display custom characters one by one
+  for(index=4;index<12;index++){     
     Mouth_lcd.setCursor(index ,0);
-    Mouth_lcd.write(index);                 //-->>>PRINTING/DISPLAYING CUSTOM CHARACTERS
+    Mouth_lcd.write(index);              
   } 
 }
